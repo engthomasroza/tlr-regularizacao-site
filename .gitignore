@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Arquivos de origem pessoais (não fazem parte do site publicado)
+cartão de visita.pdf

@@ -1,5 +1,6 @@
 import { Menu, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import logoTlr from '../assets/logo-tlr.png'
 import { WHATSAPP_LINK } from '../config/site'
 import WhatsAppIcon from './icons/WhatsAppIcon'
 
@@ -32,13 +33,10 @@ export default function Header() {
       }`}
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* TODO: substituir pelo logotipo real da TLR quando estiver pronto */}
         <a href="#inicio" className="flex items-center gap-2 font-heading">
-          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-navy-900 text-sm font-bold text-gold-300">
-            TLR
-          </span>
+          <img src={logoTlr} alt="TLR" className="h-9 w-9 object-contain" />
           <span className="hidden text-base font-semibold text-navy-900 sm:inline">
-            TLR Regularização
+            Regularização
           </span>
         </a>
 
