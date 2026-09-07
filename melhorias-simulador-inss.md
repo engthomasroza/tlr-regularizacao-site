@@ -2,14 +2,14 @@
 
 **Site:** https://tlr-regularizacao-site.vercel.app/
 **Onde:** seção "Simule o débito estimado da sua obra" (bloco `#simulador`)
-**Contexto:** o simulador calcula um "INSS bruto estimado" a partir de Área, Tipo de Imóvel, Tipo de Construção, Proprietário e Situação da Obra. Comparando com a planilha usada no curso (`Planilha_Simulador_IMPOSTO.xls`), foram confirmados 4 ajustes — os 3 primeiros já tinham sido identificados, o 4º foi confirmado agora com a planilha em mãos. Todos os números abaixo vêm da própria planilha, não são mais estimativas.
+**Contexto:** o simulador calcula um "INSS bruto estimado" a partir de Área, Tipo de Imóvel, Tipo de Construção, Proprietário e Situação da Obra. Foram confirmados 5 ajustes reais (estado, VAU, equivalência, alíquota, Fator Social), cruzando a planilha do curso, um vídeo de aula e o Manual do SERO v3.0 oficial da Receita. Com os 5 aplicados, a reconciliação com o caso real do Evaldo fecha exata (R$108.834,21 contra R$108.834,20 do curso — diferença de 1 centavo).
 
 Fórmula final que o simulador deveria seguir:
 
 ```
 Área Equivalente = Área Informada × % Equivalência (por destinação/padrão)
 COD              = Área Equivalente × VAU (por estado e tipo de imóvel)
-RMT              = COD × % Mão de Obra (por tipo de construção)
+RMT              = COD × % Mão de Obra (por destinação — não é igual pra todo mundo, ver item 5)
 INSS Bruto       = RMT × Alíquota total (36,8% PF / 40% PJ optante do Simples)
 ```
 
@@ -45,30 +45,33 @@ INSS Bruto       = RMT × Alíquota total (36,8% PF / 40% PJ optante do Simples)
 
 ---
 
-## 3. [PRIORIDADE MÉDIA] Falta o Percentual de Equivalência de Área — tabela confirmada
+## 3. [PRIORIDADE MÉDIA] Falta o Percentual de Equivalência de Área — tabela confirmada por vídeo do curso
 
 **Problema:** o cálculo usa 100% da área informada, sem reduzir pelo Percentual de Equivalência (Manual SERO v3.0, item 17.1 / art. 25, §6º). Isso não é um benefício opcional — é uma etapa padrão do cálculo do COD, que reduz a área principal antes de multiplicar pelo VAU.
 
-**Tabela confirmada na planilha do curso (ABNT NBR 12.721/2006):**
+**⚠️ Correção importante:** a tabela ABNT NBR 12.721/2006 (R-1/R-8/R-16/CSL/PIS) que estava na planilha do curso — e que eu tinha usado numa versão anterior deste documento — **não é** a tabela certa para isso. Ela serve para calibrar o CUB do SINDUSCON, uma finalidade diferente. A tabela que a Receita/SERO realmente usa para o Percentual de Equivalência é mais simples (por destinação e faixa de área, sem variar por "padrão"), e foi confirmada num print de tela de aula do curso:
 
-| Projeto Padrão | % Equivalência | Uso típico |
+| Destinação | Faixa de área | % Equivalência |
 |---|---|---|
-| R-1 Baixo | 88,57% | Unifamiliar, padrão baixo |
-| R-1 Normal | 93,45% | Unifamiliar, padrão normal |
-| R-1 Alto | 93,60% | Unifamiliar, padrão alto |
-| R-8 Baixo | 67,30% | Multifamiliar (edifício de apartamentos), padrão baixo |
-| R-8 Normal | 68,93% | Multifamiliar, padrão normal |
-| R-8 Alto | 78,49% | Multifamiliar, padrão alto |
-| R-16 Normal (>10 pav.) | 77,87% | Multifamiliar alto (mais de 10 pavimentos) |
-| R-16 Alto (>10 pav.) | 80,02% | Multifamiliar alto (mais de 10 pavimentos) |
-| CSL (Comercial Salas e Lojas) | 65,99% | Comercial |
-| PIS (Interesse Social) | 98,65% | Habitação popular |
-| Galpão Industrial | 100% | Sem redução — área normal = área equivalente |
+| Residencial Unifamiliar | 0,00 a 1.000,00 m² | 89% |
+| Residencial Unifamiliar | ≥ 1.000,01 m² | 85% |
+| Residencial Multifamiliar | 0,00 a 1.000,00 m² | 90% |
+| Residencial Multifamiliar | ≥ 1.000,01 m² | 86% |
+| Comercial Salas e Lojas | 0,00 a 3.000,00 m² | 86% |
+| Comercial Salas e Lojas | ≥ 3.000,01 m² | 83% |
+| Galpão Industrial | ≥ 0,00 m² | 95% |
+| Casa Popular | ≥ 0,00 m² | 98% |
+| Conjunto Habitacional Popular | ≥ 0,00 m² | 98%* |
+| Edifício de Garagens | 0,00 a 3.000,00 m² | 86% |
+| Edifício de Garagens | ≥ 3.000,01 m² | 83% |
 
-**Como o simulador não pergunta "padrão" hoje**, a recomendação mais simples e defensável é usar o valor **Normal** de cada destinação como padrão (R-1 Normal para unifamiliar, R-8 Normal para multifamiliar, etc.) — é o cenário mais comum, e evita superestimar (Baixo) ou subestimar (Alto) o "bruto sem redução" que o simulador promete mostrar.
+*(Conjunto Habitacional Popular: a faixa acima de 0 m² não veio nítida no print — tratado como igual a Casa Popular até confirmar.)*
+
+Essa tabela já foi incorporada na skill (`SKILL.md`, seção 5.4) e valida quase exatamente o número do curso para o caso do Evaldo (ver seção de reconciliação abaixo) — bem melhor do que a tabela ABNT que eu tinha usado antes.
 
 **O que fazer:**
-- Aplicar `Área Equivalente = Área Informada × % Equivalência (Normal, por tipo de imóvel)` antes de multiplicar pelo VAU.
+- Aplicar `Área Equivalente = Área Informada × % Equivalência (por destinação e faixa de área, tabela acima)` antes de multiplicar pelo VAU.
+- Não perguntar "padrão" no formulário — essa tabela não varia por padrão construtivo, só por destinação e faixa de área. Um campo a menos para o simulador pedir.
 
 ---
 
@@ -90,17 +93,50 @@ INSS Bruto       = RMT × Alíquota total (36,8% PF / 40% PJ optante do Simples)
 
 ---
 
-## Resultado combinado — conferência com o caso do Evaldo (971,61 m², multifamiliar, MS)
+## 5. [PRIORIDADE ALTA] Falta o Fator Social (só para Pessoa Física) — era a peça que faltava
 
-| Versão | INSS bruto estimado |
+**Problema:** o simulador não aplica o Fator Social, um percentual que, quando o proprietário é pessoa física, se multiplica direto sobre a RMT conforme a área total do projeto. **Confirmado no Manual do SERO v3.0 (item 19.4) e na fórmula real da planilha do curso** — é multiplicação direta, não subtração:
+
+| Área Total | % aplicado sobre a RMT | Desconto real |
+|---|---|---|
+| Até 100 m² | 20% | 80% de desconto |
+| 100,01 a 200 m² | 40% | 60% de desconto |
+| 200,01 a 300 m² | 55% | 45% de desconto |
+| 300,01 a 400 m² | 70% | 30% de desconto |
+| Acima de 400,01 m² | 90% | só 10% de desconto |
+
+**O que fazer:**
+- Se `Proprietário = Pessoa física`: multiplicar a RMT pelo percentual da tabela acima, de acordo com a área total informada (área principal, já que o simulador não pede área complementar separada).
+- Se `Proprietário = Pessoa jurídica`: não aplicar — Fator Social é exclusivo de PF.
+- Não precisa de campo novo no formulário — já existe "Proprietário: PF/PJ" e "Área", só falta usar os dois juntos nessa conta.
+
+*(Nota: um teste anterior no simulador do curso, com 1.000 m² (que também cai na faixa >400m²), tinha dado "RMT = COD × 18%" — isso não era um MO% diferente, era 20% de mão de obra × 0,9 de Fator Social coincidindo em 18%. Resolvido agora com o Fator Social explícito na fórmula.)*
+
+---
+
+## Resultado combinado — o número final pro simulador do site (fechado, batendo com o curso)
+
+Fórmula completa, com todos os 5 itens aplicados:
+
+```
+Área Equivalente = Área × % Equivalência (destinação + faixa)
+COD = Área Equivalente × VAU (estado + destinação)
+RMT = COD × % Mão de Obra (20% alvenaria)
+RMT (se Pessoa Física) = RMT × % Fator Social (área total, multiplicador direto)
+INSS Bruto = RMT × Alíquota (36,8% PF / 31% PJ optante do Simples)
+```
+
+Rodando essa fórmula com os dados reais do Evaldo (971,61 m², multifamiliar, MS, PF, alvenaria):
+
+| Etapa | Valor |
 |---|---|
-| Site hoje (VAU de 2021, sem equivalência, alíquota 20%) | R$ 72.400,10 |
-| + Equivalência (R-8 Normal/Baixo por padrão do alvará) | R$ 49.383,68 |
-| + VAU atualizado | R$ 50.551,55 |
-| + Alíquota completa (36,8%) | **R$ 92.046,28** |
-| Simulador do curso (referência) | R$ 108.834,20 |
+| Área equivalente (× 90%) | 874,45 m² |
+| RMT (antes do Fator Social) | R$ 328.605,69 |
+| RMT (× 0,9 Fator Social, área > 400 m²) | R$ 295.745,12 |
+| INSS bruto | **R$ 108.834,21** |
+| Referência do curso | R$ 108.834,20 |
 
-Com os 4 ajustes aplicados, o simulador do site sai de **R$ 72.400,10 para R$ 92.046,28** — de uma diferença de ~33% para uma diferença de ~15% em relação ao curso. O que sobra da diferença provavelmente vem de uma suposição de padrão (Baixo/Normal) diferente da que o curso usou, ou de o curso não aplicar a equivalência do mesmo jeito nesse campo específico — vale testar lado a lado com o mesmo input antes de fechar como definitivo.
+Diferença de R$ 0,01 — arredondamento. **Fechado.** O site hoje mostra R$ 72.400,10 pra esse caso; com os 5 ajustes ele mostraria ~R$ 108.800, batendo com o curso.
 
 ---
 
@@ -141,6 +177,10 @@ Com os 4 ajustes aplicados, o simulador do site sai de **R$ 72.400,10 para R$ 92
 *(Valores em R$/m². "Popular / Interesse Social" cobre Casa Popular, Projeto de Interesse Social e Conjunto Habitacional Popular.)*
 
 ---
+
+## Sobre o subsolo/garagem do Evaldo
+
+Cheguei a levantar a hipótese de que o subsolo/garagem entrasse como área complementar e explicasse a diferença. **Não era isso** — a reconciliação fechou 100% só com o Fator Social (item 5), sem precisar separar nenhuma área complementar. Descarto essa hipótese.
 
 ## Fora de escopo por agora (não implementar ainda)
 

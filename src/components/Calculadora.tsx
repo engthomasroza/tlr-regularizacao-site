@@ -47,16 +47,35 @@ const VAU_POR_ESTADO: Record<Estado, Record<Destinacao, number>> = {
   TO: { unifamiliar: 2845.9, multifamiliar: 2376.01, comercial: 2704.95, galpao: 1264.09, popular: 1518.21 },
 }
 
-// Percentual de Equivalência de Área (Manual SERO v3.0, item 17.1 / art. 25, §6º; tabela
-// ABNT NBR 12.721/2006). Reduz a área principal antes de multiplicar pelo VAU. Como o
-// simulador não pergunta o padrão da obra, usamos o projeto padrão "Normal" de cada
-// destinação — o cenário mais comum, que evita superestimar (Baixo) ou subestimar (Alto).
-const PERCENTUAL_EQUIVALENCIA: Record<Destinacao, number> = {
-  unifamiliar: 0.9345, // R-1 Normal
-  multifamiliar: 0.6893, // R-8 Normal
-  comercial: 0.6599, // CSL (Comercial Salas e Lojas)
-  galpao: 1.0, // sem redução
-  popular: 0.9865, // PIS (Interesse Social)
+// Percentual de Equivalência de Área (Manual SERO v3.0, item 17.1 / art. 25, §6º). Reduz
+// a área informada antes de multiplicar pelo VAU. Varia por destinação e por faixa de
+// área — não varia por padrão construtivo (a tabela ABNT NBR 12.721/2006 de R-1/R-8/CSL
+// serve para calibrar o CUB do SINDUSCON, uma finalidade diferente, e não deve ser usada
+// aqui).
+function percentualEquivalencia(destinacao: Destinacao, area: number): number {
+  switch (destinacao) {
+    case 'unifamiliar':
+      return area <= 1000 ? 0.89 : 0.85
+    case 'multifamiliar':
+      return area <= 1000 ? 0.9 : 0.86
+    case 'comercial':
+      return area <= 3000 ? 0.86 : 0.83
+    case 'galpao':
+      return 0.95
+    case 'popular':
+      return 0.98
+  }
+}
+
+// Fator Social (Manual SERO v3.0, item 19.4) — multiplicador direto sobre a RMT,
+// exclusivo de pessoa física, conforme a área total do projeto. Quanto menor a área,
+// maior o desconto (ex: até 100 m² fica com só 20% da RMT, ou seja, 80% de desconto).
+function fatorSocial(area: number): number {
+  if (area <= 100) return 0.2
+  if (area <= 200) return 0.4
+  if (area <= 300) return 0.55
+  if (area <= 400) return 0.7
+  return 0.9
 }
 
 // % de mão de obra sobre o custo da obra, por destinação e tipo de construção.
@@ -165,7 +184,7 @@ export default function Calculadora() {
     setErro(null)
 
     // Área Equivalente (Percentual de Equivalência aplicado antes do VAU)
-    const areaEquivalente = areaNum * PERCENTUAL_EQUIVALENCIA[destinacao]
+    const areaEquivalente = areaNum * percentualEquivalencia(destinacao, areaNum)
 
     // COD (Custo da Obra por Destinação)
     const vau = VAU_POR_ESTADO[estado][destinacao]
@@ -173,7 +192,12 @@ export default function Calculadora() {
 
     // RMT (Remuneração da Mão de Obra Total)
     const percentualMO = PERCENTUAL_MAO_DE_OBRA[destinacao][tipoObra]
-    const rmt = cod * percentualMO
+    let rmt = cod * percentualMO
+
+    // Fator Social: multiplicador direto sobre a RMT, exclusivo de pessoa física
+    if (proprietario === 'pf') {
+      rmt *= fatorSocial(areaNum)
+    }
 
     // INSS bruto = RMT x alíquota total (36,8%), sem nenhuma redução legal aplicada
     const inssBruto = rmt * ALIQUOTA_TOTAL
@@ -352,11 +376,11 @@ export default function Calculadora() {
             <p className="mt-6 flex gap-2 text-xs text-navy-500">
               <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               Simulação simplificada e educativa, com base em valores de referência da Receita
-              Federal por estado (VAU), no Percentual de Equivalência de Área padrão de cada tipo
-              de imóvel e na alíquota total do INSS (36,8%). O valor exato da sua obra, e o quanto
-              pode ser reduzido, depende de outros fatores (padrão da obra, tipo de mão de obra,
-              documentação, decadência tributária, Fator Social) e é calculado com precisão no
-              diagnóstico gratuito, sem compromisso.
+              Federal por estado (VAU), no Percentual de Equivalência de Área por destinação e
+              faixa de área, no Fator Social (para pessoa física) e na alíquota total do INSS
+              (36,8%). O valor exato da sua obra, e o quanto pode ser reduzido, depende de outros
+              fatores (tipo de mão de obra, documentação, decadência tributária) e é calculado com
+              precisão no diagnóstico gratuito, sem compromisso.
             </p>
           </div>
         </Reveal>
