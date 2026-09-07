@@ -45,30 +45,33 @@ INSS Bruto       = RMT × Alíquota total (36,8% PF / 40% PJ optante do Simples)
 
 ---
 
-## 3. [PRIORIDADE MÉDIA] Falta o Percentual de Equivalência de Área — tabela confirmada
+## 3. [PRIORIDADE MÉDIA] Falta o Percentual de Equivalência de Área — tabela confirmada por vídeo do curso
 
 **Problema:** o cálculo usa 100% da área informada, sem reduzir pelo Percentual de Equivalência (Manual SERO v3.0, item 17.1 / art. 25, §6º). Isso não é um benefício opcional — é uma etapa padrão do cálculo do COD, que reduz a área principal antes de multiplicar pelo VAU.
 
-**Tabela confirmada na planilha do curso (ABNT NBR 12.721/2006):**
+**⚠️ Correção importante:** a tabela ABNT NBR 12.721/2006 (R-1/R-8/R-16/CSL/PIS) que estava na planilha do curso — e que eu tinha usado numa versão anterior deste documento — **não é** a tabela certa para isso. Ela serve para calibrar o CUB do SINDUSCON, uma finalidade diferente. A tabela que a Receita/SERO realmente usa para o Percentual de Equivalência é mais simples (por destinação e faixa de área, sem variar por "padrão"), e foi confirmada num print de tela de aula do curso:
 
-| Projeto Padrão | % Equivalência | Uso típico |
+| Destinação | Faixa de área | % Equivalência |
 |---|---|---|
-| R-1 Baixo | 88,57% | Unifamiliar, padrão baixo |
-| R-1 Normal | 93,45% | Unifamiliar, padrão normal |
-| R-1 Alto | 93,60% | Unifamiliar, padrão alto |
-| R-8 Baixo | 67,30% | Multifamiliar (edifício de apartamentos), padrão baixo |
-| R-8 Normal | 68,93% | Multifamiliar, padrão normal |
-| R-8 Alto | 78,49% | Multifamiliar, padrão alto |
-| R-16 Normal (>10 pav.) | 77,87% | Multifamiliar alto (mais de 10 pavimentos) |
-| R-16 Alto (>10 pav.) | 80,02% | Multifamiliar alto (mais de 10 pavimentos) |
-| CSL (Comercial Salas e Lojas) | 65,99% | Comercial |
-| PIS (Interesse Social) | 98,65% | Habitação popular |
-| Galpão Industrial | 100% | Sem redução — área normal = área equivalente |
+| Residencial Unifamiliar | 0,00 a 1.000,00 m² | 89% |
+| Residencial Unifamiliar | ≥ 1.000,01 m² | 85% |
+| Residencial Multifamiliar | 0,00 a 1.000,00 m² | 90% |
+| Residencial Multifamiliar | ≥ 1.000,01 m² | 86% |
+| Comercial Salas e Lojas | 0,00 a 3.000,00 m² | 86% |
+| Comercial Salas e Lojas | ≥ 3.000,01 m² | 83% |
+| Galpão Industrial | ≥ 0,00 m² | 95% |
+| Casa Popular | ≥ 0,00 m² | 98% |
+| Conjunto Habitacional Popular | ≥ 0,00 m² | 98%* |
+| Edifício de Garagens | 0,00 a 3.000,00 m² | 86% |
+| Edifício de Garagens | ≥ 3.000,01 m² | 83% |
 
-**Como o simulador não pergunta "padrão" hoje**, a recomendação mais simples e defensável é usar o valor **Normal** de cada destinação como padrão (R-1 Normal para unifamiliar, R-8 Normal para multifamiliar, etc.) — é o cenário mais comum, e evita superestimar (Baixo) ou subestimar (Alto) o "bruto sem redução" que o simulador promete mostrar.
+*(Conjunto Habitacional Popular: a faixa acima de 0 m² não veio nítida no print — tratado como igual a Casa Popular até confirmar.)*
+
+Essa tabela já foi incorporada na skill (`SKILL.md`, seção 5.4) e valida quase exatamente o número do curso para o caso do Evaldo (ver seção de reconciliação abaixo) — bem melhor do que a tabela ABNT que eu tinha usado antes.
 
 **O que fazer:**
-- Aplicar `Área Equivalente = Área Informada × % Equivalência (Normal, por tipo de imóvel)` antes de multiplicar pelo VAU.
+- Aplicar `Área Equivalente = Área Informada × % Equivalência (por destinação e faixa de área, tabela acima)` antes de multiplicar pelo VAU.
+- Não perguntar "padrão" no formulário — essa tabela não varia por padrão construtivo, só por destinação e faixa de área. Um campo a menos para o simulador pedir.
 
 ---
 
@@ -92,15 +95,23 @@ INSS Bruto       = RMT × Alíquota total (36,8% PF / 40% PJ optante do Simples)
 
 ## Resultado combinado — conferência com o caso do Evaldo (971,61 m², multifamiliar, MS)
 
+Com a tabela de equivalência certa (90% para multifamiliar até 1.000 m², não a tabela ABNT):
+
 | Versão | INSS bruto estimado |
 |---|---|
 | Site hoje (VAU de 2021, sem equivalência, alíquota 20%) | R$ 72.400,10 |
-| + Equivalência (R-8 Normal/Baixo por padrão do alvará) | R$ 49.383,68 |
-| + VAU atualizado | R$ 50.551,55 |
-| + Alíquota completa (36,8%) | **R$ 92.046,28** |
-| Simulador do curso (referência) | R$ 108.834,20 |
+| + Equivalência certa (90%, Residencial Multifamiliar) | R$ 119.894,57 |
+| + VAU atualizado | R$ 121.446,92 |
 
-Com os 4 ajustes aplicados, o simulador do site sai de **R$ 72.400,10 para R$ 92.046,28** — de uma diferença de ~33% para uma diferença de ~15% em relação ao curso. O que sobra da diferença provavelmente vem de uma suposição de padrão (Baixo/Normal) diferente da que o curso usou, ou de o curso não aplicar a equivalência do mesmo jeito nesse campo específico — vale testar lado a lado com o mesmo input antes de fechar como definitivo.
+Esse valor (R$121.446,92) já seria o "INSS bruto, sem nenhuma redução" — e é maior que o do curso porque o curso aplicou também uma redução proporcional pelos meses não decadentes (a obra do Evaldo tem 67 meses de lançamento, mas só 60 meses — 5 anos — são cobráveis; os 7 meses excedentes já decaíram). Aplicando essa mesma proporção (60/67) só para conferir a conta:
+
+| Etapa | Valor | Referência do curso |
+|---|---|---|
+| RMT (equivalência 90% + VAU atual, sem prorata) | R$ 330.018,80 | — |
+| RMT proporcional (60/67 meses não decadentes) | R$ 295.539,23 | R$ 295.745,12 (dif. de 0,07%) |
+| INSS sem Fator de Ajuste (× 36,8%) | R$ 108.758,43 | R$ 108.834,20 (dif. de 0,07%) |
+
+Essa etapa de decadência é específica do caso do Evaldo (depende do período de lançamento) e não faz parte do simulador rápido do site — o simulador não pergunta data de início/fim da obra, só "situação" (nova/andamento/pronta). Por isso o "INSS bruto sem redução" que o simulador do site vai mostrar (R$121.446,92, sem prorata) é maior que o do curso (que já veio com o desconto de decadência aplicado) — e isso está correto: são coisas diferentes por design, não um erro a corrigir no simulador.
 
 ---
 
@@ -141,6 +152,12 @@ Com os 4 ajustes aplicados, o simulador do site sai de **R$ 72.400,10 para R$ 92
 *(Valores em R$/m². "Popular / Interesse Social" cobre Casa Popular, Projeto de Interesse Social e Conjunto Habitacional Popular.)*
 
 ---
+
+## Sobre o subsolo/garagem do Evaldo
+
+A tabela por destinação tem uma linha "Edifício de Garagens" (86%/83%) — mas essa entrada é para **edifícios inteiros dedicados a estacionamento** (enquadrados como Comercial Salas e Lojas), não para uma garagem/subsolo dentro de um prédio residencial. Um subsolo de garagem embutido no corpo do prédio entra como **área complementar** (redução de 50% para área coberta, diferente da tabela por destinação) — são duas coisas diferentes apesar do nome parecido.
+
+A conta bateu com o curso tratando o prédio inteiro como Residencial Multifamiliar, sem separar o subsolo — então o simulador do curso aparentemente não fez essa separação neste caso (ou a área do subsolo já não estava incluída nos 971,61 m² do alvará, o que não dá pra confirmar sem saber a metragem exata do subsolo). Vale essa checagem na regularização real do Evaldo, mas não muda nada no simulador do site — ele não tem esse nível de detalhe (área complementar separada) e não deveria ganhar isso agora, seria complexidade demais pra uma ferramenta de captação.
 
 ## Fora de escopo por agora (não implementar ainda)
 
