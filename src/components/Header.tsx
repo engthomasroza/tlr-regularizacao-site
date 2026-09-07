@@ -42,12 +42,12 @@ export default function Header() {
           </span>
         </a>
 
-        <nav className="hidden items-center gap-6 lg:flex" aria-label="Navegação principal">
+        <nav className="hidden items-center gap-4 xl:flex" aria-label="Navegação principal">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-navy-700 transition-colors hover:text-gold-500"
+              className="text-sm font-medium whitespace-nowrap text-navy-700 transition-colors hover:text-gold-500"
             >
               {link.label}
             </a>
@@ -68,7 +68,7 @@ export default function Header() {
 
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-md text-navy-800 lg:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-md text-navy-800 xl:hidden"
             aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
@@ -83,7 +83,7 @@ export default function Header() {
         <nav
           id="mobile-nav"
           aria-label="Navegação principal (mobile)"
-          className="border-t border-navy-100 bg-white px-4 pb-4 lg:hidden"
+          className="border-t border-navy-100 bg-white px-4 pb-4 xl:hidden"
         >
           <ul className="flex flex-col">
             {NAV_LINKS.map((link) => (
