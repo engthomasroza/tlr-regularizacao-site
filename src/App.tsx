@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react'
 import CTAFinal from './components/CTAFinal'
 import Calculadora from './components/Calculadora'
 import ComoFunciona from './components/ComoFunciona'
@@ -28,6 +29,7 @@ function App() {
       </main>
       <Footer />
       <WhatsAppButton />
+      <Analytics />
     </>
   )
 }

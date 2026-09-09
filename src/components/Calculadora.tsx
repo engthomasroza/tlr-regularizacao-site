@@ -1,3 +1,4 @@
+import { track } from '@vercel/analytics'
 import { Calculator, Info } from 'lucide-react'
 import { useId, useMemo, useState } from 'react'
 import { whatsappLinkWithMessage } from '../config/site'
@@ -203,6 +204,9 @@ export default function Calculadora() {
     const inssBruto = rmt * ALIQUOTA_TOTAL
 
     setResultado({ area: areaNum, estadoLabel, destinacaoLabel, inssBruto })
+
+    // Métrica: uma simulação calculada com sucesso (sem dados pessoais, só categorias)
+    track('simulacao_calculada', { estado, destinacao, situacao, proprietario })
   }
 
   const mensagemWhatsApp = resultado
@@ -365,6 +369,7 @@ export default function Calculadora() {
                   href={whatsappLinkWithMessage(mensagemWhatsApp)}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => track('simulador_whatsapp_click')}
                   className="mt-6 inline-flex items-center gap-2 rounded-full bg-gold-400 px-6 py-3.5 text-base font-semibold text-navy-950 shadow-md transition-colors hover:bg-gold-500"
                 >
                   <WhatsAppIcon className="h-5 w-5" />
