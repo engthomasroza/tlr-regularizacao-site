@@ -2,6 +2,7 @@ import { Menu, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import logoTlr from '../assets/logo-tlr.png'
 import { WHATSAPP_LINK } from '../config/site'
+import { reportWhatsAppConversion } from '../lib/gtagConversion'
 import WhatsAppIcon from './icons/WhatsAppIcon'
 
 const NAV_LINKS = [
@@ -58,6 +59,7 @@ export default function Header() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Falar no WhatsApp"
+            onClick={reportWhatsAppConversion}
             className="flex items-center gap-2 rounded-full bg-gold-400 px-3 py-2 text-sm font-semibold text-navy-950 shadow-sm transition-colors hover:bg-gold-500 sm:px-4"
           >
             <WhatsAppIcon className="h-4 w-4" />

@@ -1,5 +1,6 @@
 import { AlertTriangle, Ban, FileSearch, TrendingUp } from 'lucide-react'
 import { whatsappLinkWithMessage } from '../config/site'
+import { reportWhatsAppConversion } from '../lib/gtagConversion'
 import Reveal from './Reveal'
 import WhatsAppIcon from './icons/WhatsAppIcon'
 
@@ -59,6 +60,7 @@ export default function Problema() {
               )}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={reportWhatsAppConversion}
               className="mt-5 inline-flex items-center gap-2 rounded-full bg-navy-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-navy-800"
             >
               <WhatsAppIcon className="h-4 w-4" />

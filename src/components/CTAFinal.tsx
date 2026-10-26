@@ -1,4 +1,5 @@
 import { WHATSAPP_LINK } from '../config/site'
+import { reportWhatsAppConversion } from '../lib/gtagConversion'
 import Reveal from './Reveal'
 import WhatsAppIcon from './icons/WhatsAppIcon'
 
@@ -14,6 +15,7 @@ export default function CTAFinal() {
             href={WHATSAPP_LINK}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={reportWhatsAppConversion}
             className="mt-8 inline-flex items-center gap-3 rounded-full bg-gold-400 px-8 py-4 text-lg font-bold text-navy-950 shadow-lg transition-colors hover:bg-gold-500"
           >
             <WhatsAppIcon className="h-6 w-6" />

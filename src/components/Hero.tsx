@@ -1,4 +1,5 @@
 import { WHATSAPP_LINK } from '../config/site'
+import { reportWhatsAppConversion } from '../lib/gtagConversion'
 import HeroIllustration from './HeroIllustration'
 import Reveal from './Reveal'
 import WhatsAppIcon from './icons/WhatsAppIcon'
@@ -22,6 +23,7 @@ export default function Hero() {
               href={WHATSAPP_LINK}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={reportWhatsAppConversion}
               className="inline-flex items-center gap-2 rounded-full bg-gold-400 px-6 py-3.5 text-base font-semibold text-navy-950 shadow-md transition-colors hover:bg-gold-500"
             >
               <WhatsAppIcon className="h-5 w-5" />

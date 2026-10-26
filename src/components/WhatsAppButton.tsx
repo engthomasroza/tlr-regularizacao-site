@@ -1,4 +1,5 @@
 import { WHATSAPP_LINK } from '../config/site'
+import { reportWhatsAppConversion } from '../lib/gtagConversion'
 import WhatsAppIcon from './icons/WhatsAppIcon'
 
 /**
@@ -11,6 +12,7 @@ export default function WhatsAppButton() {
       href={WHATSAPP_LINK}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={reportWhatsAppConversion}
       aria-label="Falar no WhatsApp com a TLR Regularização"
       className="animate-whatsapp-pulse fixed right-5 bottom-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-105 focus-visible:scale-105 sm:right-8 sm:bottom-8"
     >

@@ -1,6 +1,7 @@
 import { COMPANY, INSTAGRAM_URL, WHATSAPP_LINK } from '../config/site'
 import InstagramIcon from './icons/InstagramIcon'
 import WhatsAppIcon from './icons/WhatsAppIcon'
+import { reportWhatsAppConversion } from '../lib/gtagConversion'
 
 export default function Footer() {
   return (
@@ -23,6 +24,7 @@ export default function Footer() {
                 href={WHATSAPP_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={reportWhatsAppConversion}
                 className="inline-flex items-center gap-2 font-semibold text-gold-300 hover:text-gold-200"
               >
                 <WhatsAppIcon className="h-4 w-4" />
