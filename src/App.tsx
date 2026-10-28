@@ -1,6 +1,7 @@
 import { Analytics } from '@vercel/analytics/react'
 import CTAFinal from './components/CTAFinal'
 import Calculadora from './components/Calculadora'
+import CasosReais from './components/CasosReais'
 import ComoFunciona from './components/ComoFunciona'
 import Diferenciais from './components/Diferenciais'
 import FAQ from './components/FAQ'
@@ -18,12 +19,13 @@ function App() {
       <Header />
       <main>
         <Hero />
+        <CasosReais />
+        <SobreProfissional />
         <Problema />
         <Calculadora />
         <Servico />
         <ComoFunciona />
         <Diferenciais />
-        <SobreProfissional />
         <FAQ />
         <CTAFinal />
       </main>
